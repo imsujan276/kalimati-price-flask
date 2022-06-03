@@ -2,8 +2,11 @@ from flask import Flask, jsonify
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import ssl
+import json
 
 app = Flask(__name__)
+ssl._create_default_https_context = ssl._create_unverified_context
 
 URL = "https://kalimatimarket.gov.np/"
 
@@ -17,17 +20,15 @@ def home():
     for tr in results.find_all("tr"):
         data_td = []
         for td in tr.findAll("td"):
-            if len(data) == 0:
-                data.insert(0, td.text.strip())
-            else:
                 data_td.append(td.text.strip())
-        print()
-        data.append(data_td)
+        if len(data_td) > 0:
+            data.append(data_td)
     return jsonify(data)
 
 @app.route("/pd")
-def pd():
+def tables():
     tables=pd.read_html(URL)
-    # tables[0]
-    return "tables[0].to_json()"
+    df = tables[0]
+    data = json.dumps(json.loads(df.to_json(orient="records")))
+    return data
     
