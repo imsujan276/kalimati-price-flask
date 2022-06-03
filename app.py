@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -9,9 +9,13 @@ app = Flask(__name__)
 ssl._create_default_https_context = ssl._create_unverified_context
 
 URL = "https://kalimatimarket.gov.np/"
+SECRET = "lWqBcOoELieSOtVzoeJb_*Sv0$yx6QQzG7z@v)ieY=wlm(_!E3YQvFXL=6"
 
 @app.route("/")
 def home():
+    dt = request.args.get('dt')
+    if(dt != SECRET):
+        return jsonify({"error": "A BIG NO NO"})
     page = requests.get(URL)
     soup = BeautifulSoup(page.content, "html.parser")
     results = soup.find(id="commodityDailyPrice")
@@ -27,6 +31,9 @@ def home():
 
 @app.route("/pd")
 def tables():
+    dt = request.args.get('dt')
+    if(dt != SECRET):
+        return jsonify({"error": "A BIG NO NO"})
     tables=pd.read_html(URL)
     df = tables[0]
     data = json.dumps(json.loads(df.to_json(orient="records")))
