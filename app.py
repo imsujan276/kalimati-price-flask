@@ -18,16 +18,21 @@ def home():
         return jsonify({"error": "A BIG NO NO"})
     page = requests.get(URL)
     soup = BeautifulSoup(page.content, "html.parser")
-    results = soup.find(id="commodityDailyPrice")
 
+    priceTable = soup.find(id="commodityPricesDailyTable")
+    date = priceTable.find_all("h5")[0].text
+    print(date)
+
+
+    table =  soup.find(id="commodityDailyPrice")
     data = []
-    for tr in results.find_all("tr"):
+    for tr in table.find_all("tr"):
         data_td = []
         for td in tr.findAll("td"):
                 data_td.append(td.text.strip())
         if len(data_td) > 0:
             data.append(data_td)
-    return jsonify(data)
+    return jsonify({"date": date,"data": data})
 
 @app.route("/pd")
 def tables():
