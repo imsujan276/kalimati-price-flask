@@ -3,12 +3,9 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-URL = "https://kalimatimarket.gov.np/"
-
 app = Flask(__name__)
 
-if __name__ == '__main__':
-    app.run(port=5000,debug=True)
+URL = "https://kalimatimarket.gov.np/"
 
 @app.route("/")
 def home():
