@@ -54,45 +54,45 @@ def home():
     dt = request.args.get('dt')
     if(dt != SECRET):
         return jsonify({"error": "A BIG NO NO"})
-    try:
-        api = GimmeProxyApi() 
-        random_proxy = api.get_proxy()
-        # page = requests.get(URL, headers=HEADER)
-        page = requests.get(URL, headers={"User-Agent":random.choice(user_agent_list)}, proxies=random_proxy)
-        soup = BeautifulSoup(page.content, "html.parser")
-        print(soup)
-        priceTable = soup.find(id="commodityPricesDailyTable")
-        date = priceTable.find_all("h5")[0].text
-        # date = priceTable.find(id="vtitle").text
-        table =  soup.find(id="commodityDailyPrice")
-        data = []
-        for tr in table.find_all("tr"):
-            data_td = []
-            for td in tr.findAll("td"):
-                    data_td.append(td.text.strip())
-            if len(data_td) > 0:
-                data.append(data_td)
-        return jsonify({"date": date,"data": data})
-    except:
-        return jsonify({"error": "ERROR"})
+    # try:
+    #     api = GimmeProxyApi() 
+    #     random_proxy = api.get_proxy()
+    #     # page = requests.get(URL, headers=HEADER)
+    #     page = requests.get(URL, headers={"User-Agent":random.choice(user_agent_list)}, proxies=random_proxy)
+    #     soup = BeautifulSoup(page.content, "html.parser")
+    #     priceTable = soup.find(id="commodityPricesDailyTable")
+    #     date = priceTable.find_all("h5")[0].text
+    #     # date = priceTable.find(id="vtitle").text
+    #     table =  soup.find(id="commodityDailyPrice")
+    #     data = []
+    #     for tr in table.find_all("tr"):
+    #         data_td = []
+    #         for td in tr.findAll("td"):
+    #                 data_td.append(td.text.strip())
+    #         if len(data_td) > 0:
+    #             data.append(data_td)
+    #     return jsonify({"date": date,"data": data})
+    # except:
+    #     return jsonify({"error": "ERROR"})
 
 
-    # api = GimmeProxyApi() 
-    # random_proxy = api.get_proxy()
-    # page = requests.get(URL, headers={"User-Agent":random.choice(user_agent_list)}, proxies=random_proxy)
-    # soup = BeautifulSoup(page.content, "html.parser")
-    # priceTable = soup.find(id="commodityPricesDailyTable")
-    # # date = priceTable.find_all("h5")[0].text
+    api = GimmeProxyApi() 
+    random_proxy = api.get_proxy()
+    page = requests.get(URL, headers={"User-Agent":random.choice(user_agent_list)}, proxies=random_proxy)
+    soup = BeautifulSoup(page.content, "html.parser")
+    print(soup)
+    priceTable = soup.find(id="commodityPricesDailyTable")
+    date = priceTable.find_all("h5")[0].text
     # date = priceTable.find(id="vtitle").text
-    # table = soup.find(id="commodityDailyPrice")
-    # data = []
-    # for tr in table.find_all("tr"):
-    #     data_td = []
-    #     for td in tr.findAll("td"):
-    #         data_td.append(td.text.strip())
-    #     if len(data_td) > 0:
-    #         data.append(data_td)
-    # return jsonify({"date": date, "data": data})
+    table = soup.find(id="commodityDailyPrice")
+    data = []
+    for tr in table.find_all("tr"):
+        data_td = []
+        for td in tr.findAll("td"):
+            data_td.append(td.text.strip())
+        if len(data_td) > 0:
+            data.append(data_td)
+    return jsonify({"date": date, "data": data})
 
 
 @app.route("/pd")
