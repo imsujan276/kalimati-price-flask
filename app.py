@@ -60,6 +60,7 @@ def home():
         # page = requests.get(URL, headers=HEADER)
         page = requests.get(URL, headers={"User-Agent":random.choice(user_agent_list)}, proxies=random_proxy)
         soup = BeautifulSoup(page.content, "html.parser")
+        print(soup)
         priceTable = soup.find(id="commodityPricesDailyTable")
         date = priceTable.find_all("h5")[0].text
         # date = priceTable.find(id="vtitle").text
