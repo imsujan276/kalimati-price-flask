@@ -48,6 +48,7 @@ def getPricesList(prices):
     return priceList
 
 def saveToDB(date, data):
+    print("Saving to DB for: {}".format(date))
     # clear all data
     Price.query.delete()
     MyData.query.delete()
@@ -64,6 +65,7 @@ def saveToDB(date, data):
     return {"date": date, "data": data}
 
 def saveAndRespond():
+    print("Getting from API")
     prices = getPricesFromAPI()
     result = saveToDB(prices['date'], prices['data'])
     return jsonify({ "date": result['date'], "data": result['data']})
@@ -76,9 +78,12 @@ def home():
     existing_data = MyData.query.get(1)
     try:
         if(existing_data):
+            print("Existing Data: {}".format(existing_data.date))
             if(isToday(existing_data.created_date)):
+                print("Today")
                 return jsonify({"date": existing_data.date, "data": getPricesList(existing_data.prices)})
             else: 
+                print("Not Today")
                 return saveAndRespond()
                 # prices = getPricesFromAPI()
                 # if(prices['date'] == existing_data.date):
@@ -86,8 +91,10 @@ def home():
                 # else:
                 #     return saveAndRespond()
         else: 
+            print("New Data")
             return saveAndRespond()
     except:
+        print("Error")
         return jsonify({"error": "Error"})
 
 
