@@ -12,8 +12,10 @@ from gpapi.getproxies import GimmeProxyApi
 from datetime import datetime
 
 def isToday(date):
+    now = datetime.today().date()
+    print("Today: {}, Date: {}".format(now, date.date()))
     try:
-        return date.date() == datetime.today().date()
+        return date.date() == now
     except:
         return False
 
