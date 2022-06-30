@@ -13,7 +13,8 @@ from datetime import datetime
 
 def isToday(date):
     now = datetime.today().date()
-    print("Today: {}, Date: {}".format(now, date.date()))
+    hour = datetime.today().strftime('%H')
+    print("Now: {}, hour: {}, Date: {}".format(now, hour, date.date()))
     try:
         return date.date() == now
     except:
@@ -24,7 +25,7 @@ def getPricesFromAPI():
     random_proxy = api.get_proxy()
     page = requests.get(URL, headers={"User-Agent":random.choice(user_agent_list)}, proxies=random_proxy)
     soup = BeautifulSoup(page.content, "html.parser")
-    print(soup)
+    # print(soup)
     priceTable = soup.find(id="commodityPricesDailyTable")
     date = priceTable.find_all("h5")[0].text
     table = soup.find(id="commodityDailyPrice")
