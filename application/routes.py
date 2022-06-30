@@ -16,7 +16,10 @@ def isToday(date):
     hour = datetime.today().strftime('%H')
     print("Now: {}, hour: {}, Date: {}".format(now, hour, date.date()))
     try:
-        return date.date() == now
+        if(hour <= 7):
+            return False
+        else:
+            return date.date() == now
     except:
         return False
 
