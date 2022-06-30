@@ -2,9 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import ssl
 from application.constants import SECRET
+from flask_apscheduler import APScheduler
 
 db = SQLAlchemy()
-
+scheduler = APScheduler()
 
 def create_app():
     """Construct the core application."""
@@ -16,9 +17,10 @@ def create_app():
     ssl._create_default_https_context = ssl._create_unverified_context
 
     db.init_app(app)
+    scheduler.init_app(app)
 
     with app.app_context():
-        from . import routes  # Import routes
+        from . import routes, schedular  # Import routes
         db.create_all()  # Create sql tables for our data models
-
+        schedular.runSaveToDBSchedular(scheduler)
         return app
