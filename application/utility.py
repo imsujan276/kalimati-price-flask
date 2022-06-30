@@ -79,7 +79,7 @@ def saveAndRespond():
 def saveToDBCronJob():
     print("================ Cronjob started: {} ================".format(datetime.today().strftime("%d %b, %Y | %-I:%-M %p")))
     hour = datetime.today().strftime("%-H")
-    if hour <=5 or hour >=13:
+    if int(hour) <=5 or int(hour) >=13:
         print("================ Cronjob cancelled | Time: {} ================".format(hour))
     else:
         prices = getPricesFromAPI()
