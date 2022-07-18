@@ -63,7 +63,9 @@ def saveToDB():
     for d in data:
         # p = Price(title=d[0],unit=d[1],min=d[2],max=d[3],avg=d[4])
         _title = d[0]
-        _unit = re.sub('^.*\((.*?)\)[^\(]*$', '\g<1>', _title) # Search for the content between the last set of brackets
+         # Search for the content between the last set of brackets
+        _unit = re.sub('^.*\((.*?)\)[^\(]*$', '\g<1>', _title).strip()
+        _title = _title.replace(_unit, "").replace("()", "").strip()
         p = Price(title=_title,unit=_unit,min=d[1],max=d[2],avg=d[3])
         db.session.add(p)
         prices.append(p)
@@ -100,7 +102,9 @@ def saveToDBCronJob():
             for d in data:
                 # p = Price(title=d[0],unit=d[1],min=d[2],max=d[3],avg=d[4])
                 _title = d[0]
-                _unit = re.sub('^.*\((.*?)\)[^\(]*$', '\g<1>', _title) # Search for the content between the last set of brackets
+                 # Search for the content between the last set of brackets
+                _unit = re.sub('^.*\((.*?)\)[^\(]*$', '\g<1>', _title).strip()
+                _title = _title.replace(_unit, "").replace("()", "").strip()
                 p = Price(title=_title,unit=_unit,min=d[1],max=d[2],avg=d[3])
                 db.session.add(p)
                 prices.append(p)
