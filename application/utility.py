@@ -1,5 +1,5 @@
 from flask import current_app as app, jsonify
-import random, requests
+import random, requests, re
 from gpapi.getproxies import GimmeProxyApi
 from datetime import datetime
 from .models import MyData, db, Price
@@ -22,7 +22,6 @@ def getPricesFromAPI():
     random_proxy = api.get_proxy()
     page = requests.get(URL, headers={"User-Agent":random.choice(user_agent_list)}, proxies=random_proxy)
     soup = BeautifulSoup(page.content, "html.parser")
-    # print(soup)
     priceTable = soup.find(id="commodityPricesDailyTable")
     date = priceTable.find_all("h5")[0].text
     table = soup.find(id="commodityDailyPrice")
@@ -54,13 +53,18 @@ def saveToDB():
     date = prices['date']
     data = prices['data']
     print("Saving to DB for: {}".format(date))
+    print(data)
     # clear all data
     Price.query.delete()
     MyData.query.delete()
     #add new data
     prices = []
+
     for d in data:
-        p = Price(title=d[0],unit=d[1],min=d[2],max=d[3],avg=d[4])
+        # p = Price(title=d[0],unit=d[1],min=d[2],max=d[3],avg=d[4])
+        _title = d[0]
+        _unit = re.sub('^.*\((.*?)\)[^\(]*$', '\g<1>', _title) # Search for the content between the last set of brackets
+        p = Price(title=_title,unit=_unit,min=d[1],max=d[2],avg=d[3])
         db.session.add(p)
         prices.append(p)
 
@@ -72,8 +76,9 @@ def saveToDB():
 # calls [saveToDB] and return http response
 def saveAndRespond():
     print("Getting from API")
-    result = saveToDB()
-    return jsonify({ "date": result['date'], "data": result['data']})
+    saveToDB()
+    result = MyData.query.get(1)
+    return jsonify({ "date": result.date, "data": getPricesList(result.prices)})
 
 #  Cronjob method to save the data to DB 
 def saveToDBCronJob():
@@ -93,7 +98,10 @@ def saveToDBCronJob():
             #add new data
             prices = []
             for d in data:
-                p = Price(title=d[0],unit=d[1],min=d[2],max=d[3],avg=d[4])
+                # p = Price(title=d[0],unit=d[1],min=d[2],max=d[3],avg=d[4])
+                _title = d[0]
+                _unit = re.sub('^.*\((.*?)\)[^\(]*$', '\g<1>', _title) # Search for the content between the last set of brackets
+                p = Price(title=_title,unit=_unit,min=d[1],max=d[2],avg=d[3])
                 db.session.add(p)
                 prices.append(p)
 
