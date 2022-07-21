@@ -2,7 +2,7 @@
 from . import utility
 
 def runSaveToDBSchedular(scheduler):
-    # hourly cron job
-    scheduler.add_job(func=utility.saveToDBCronJob, args=[], trigger='interval', id='saveToDB', seconds=3600)
+    # cron job per hour * 3
+    scheduler.add_job(func=utility.saveToDBCronJob, args=[], trigger='interval', id='saveToDB', seconds=3600*3)
     scheduler.start()
     
